@@ -9,8 +9,6 @@ local ui = wcontent.ui
 local gradient = Material("gui/gradient.vtf")
 
 net.Receive("wcontent_list", function()
-    local oldCount = #wcontent.list
-
     wcontent.list = net.ReadTable()
 
     if (net.ReadBool()) then
@@ -65,13 +63,20 @@ function wcontent:PerformDownload()
         local name = id
         frame:SetTitle("Downloading " .. name .. "...")
         steamworks.FileInfo(id, function(res)
+			if !res then
+				downloaded = downloaded + 1
+                ready = true
+				
+				return
+			end
+		
             name = res.title:Left(24)
 
             if IsValid(frame) then
                 frame:SetTitle("Downloading " .. name .. "...")
             end
-
-            wcontent._cached[id] = {title = res.title, owner = res.ownername, size = res.size, description = res.description}
+	
+			wcontent._cached[id] = {title = res.title, owner = res.ownername, size = res.size, description = res.description}
 
             wcontent:DownloadFile(res.fileid, function(path)
                 downloaded = downloaded + 1
@@ -143,8 +148,13 @@ function wcontent:OpenPlayerMenu()
 
         if !data then
             data = {title = "Loading...", owner = "unknown", size = 0, description = "Loading..."}
+			
             steamworks.FileInfo(v, function(res)
-                wcontent._cached[v] = {title = res.title, owner = res.ownername, size = res.size, description = res.description}
+				if !res then
+					wcontent._cached[v] = {title = "Invalid addon (" .. v .. ")", owner = "...", size = 0, description = "..."}
+				else
+					wcontent._cached[v] = {title = res.title, owner = res.ownername, size = res.size || 0, description = res.description}
+				end
                 data = wcontent._cached[v]
                 size = string.NiceSize(data.size)
             end)

@@ -5,8 +5,12 @@ function wcontent:DownloadFile(id, callback)
     end)
 end
 
-function wcontent:GetInfo(id, callback)
-    steamworks.FileInfo(id, callback)
+function wcontent:CheckID(id)
+	steamworks.FileInfo(id, function(res)
+		if !res then
+			chat.AddText(wcontent.ui.Colors.Red, "We couldn't find addon with this ID: \"" .. id .. "\".")
+		end
+	end)
 end
 
 function wcontent:DownloadMaterial(key, url, callback)
