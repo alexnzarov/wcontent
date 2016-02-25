@@ -5,7 +5,7 @@ wcontent._cached = wcontent._cached or {}
 file.CreateDir("wcontent")
 file.CreateDir("wcontent/materials")
 
-local ui = wcontent.ui
+local ui = wcontent.ui 
 local gradient = Material("gui/gradient.vtf")
 
 net.Receive("wcontent_list", function()
