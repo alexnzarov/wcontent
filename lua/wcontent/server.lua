@@ -23,6 +23,8 @@ function wcontent:LoadList()
     wcontent.list = wcontent:StringToTable(file.Read("wcontent/list.dat", "DATA") || "")
 end
 
+wcontent:LoadList()
+
 function wcontent:Network(ply, first)
     net.Start("wcontent_list")
     net.WriteTable(wcontent.list)
